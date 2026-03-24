@@ -1,0 +1,24 @@
+services:
+  m4b-audiobook-converter:
+    image: ghcr.io/aidrak/m4b-audiobook-converter:latest
+    container_name: m4b-audiobook-converter
+    environment:
+      - PUID=${PUID:-99}
+      - PGID=${PGID:-100}
+      - SLEEPTIME=${SLEEPTIME:-5m}
+      - MAKE_BACKUP=${MAKE_BACKUP:-N}
+      - AUDIO_BITRATE=${AUDIO_BITRATE:-auto}
+      - AUDIO_CODEC=${AUDIO_CODEC:-libfdk_aac}
+      - CPU_CORES=${CPU_CORES:-0}
+    volumes:
+      - ${INPUT_PATH:-/mnt/user/downloads/complete/audiobooks/M4B}:/input
+      - ${OUTPUT_PATH:-/mnt/user/downloads/complete/audiobooks/tagged}:/output
+      - ${CONFIG_PATH:-/mnt/user/appdata/m4b-audiobook-converter}:/config
+    tmpfs:
+      - /temp:size=4G
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

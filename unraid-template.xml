@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>m4b-audiobook-converter</Name>
+  <Repository>ghcr.io/aidrak/m4b-audiobook-converter:latest</Repository>
+  <Registry>https://github.com/aidrak/m4b-audiobook-converter/pkgs/container/m4b-audiobook-converter</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/aidrak/m4b-audiobook-converter/issues</Support>
+  <Project>https://github.com/aidrak/m4b-audiobook-converter</Project>
+  <Overview>Watches a folder for multi-file MP3 audiobooks and automatically converts them into single chapterized M4B files using m4b-tool.</Overview>
+  <Category>MediaApp:Music</Category>
+  <WebUI/>
+  <TemplateURL>https://raw.githubusercontent.com/aidrak/m4b-audiobook-converter/main/unraid-template.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/aidrak/m4b-audiobook-converter/main/icon.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Description>Automatically converts multi-file MP3 audiobooks into single chapterized M4B files.
+
+Key Features:
+- Watches input folder for new audiobook directories
+- Merges multiple audio files (MP3, M4A, OGG, FLAC, etc.) into a single M4B
+- Generates chapter markers from filenames
+- Auto-detects source bitrate for quality matching
+- High-quality AAC encoding via libfdk_aac
+- Failed conversions preserved with error logs (never deletes source on failure)
+- Optional backup of original files
+- Docker-native logging with rotation
+- Built on m4b-tool 0.5.2 with FFmpeg
+
+Usage:
+1. Drop audiobook folders (containing MP3s) into the Input directory
+2. Container scans every 5 minutes (configurable)
+3. Converted M4B files appear in the Output directory
+4. Check /config/logs/ for per-book conversion logs</Description>
+  <Networking>
+    <Mode>bridge</Mode>
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/user/downloads/complete/audiobooks/M4B</HostDir>
+      <ContainerDir>/input</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+    <Volume>
+      <HostDir>/mnt/user/downloads/complete/audiobooks/tagged</HostDir>
+      <ContainerDir>/output</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+    <Volume>
+      <HostDir>/mnt/user/appdata/m4b-audiobook-converter</HostDir>
+      <ContainerDir>/config</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <Environment>
+    <Variable>
+      <Value>99</Value>
+      <Name>PUID</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>100</Value>
+      <Name>PGID</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>5m</Value>
+      <Name>SLEEPTIME</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>0</Value>
+      <Name>CPU_CORES</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>N</Value>
+      <Name>MAKE_BACKUP</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>auto</Value>
+      <Name>AUDIO_BITRATE</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>libfdk_aac</Value>
+      <Name>AUDIO_CODEC</Name>
+      <Mode/>
+    </Variable>
+  </Environment>
+  <Labels/>
+  <Config Name="Input Directory" Target="/input" Default="/mnt/user/downloads/complete/audiobooks/M4B" Mode="rw" Description="Directory to watch for new audiobook folders containing MP3/audio files" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/downloads/complete/audiobooks/M4B</Config>
+  <Config Name="Output Directory" Target="/output" Default="/mnt/user/downloads/complete/audiobooks/tagged" Mode="rw" Description="Directory where converted M4B files are placed" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/downloads/complete/audiobooks/tagged</Config>
+  <Config Name="Config Directory" Target="/config" Default="/mnt/user/appdata/m4b-audiobook-converter" Mode="rw" Description="Directory for logs and configuration state" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/m4b-audiobook-converter</Config>
+  <Config Name="Scan Interval" Target="SLEEPTIME" Default="5m" Mode="" Description="How often to scan for new audiobooks (e.g., 1m, 5m, 15m, 1h)" Type="Variable" Display="always" Required="false" Mask="false">5m</Config>
+  <Config Name="CPU Cores" Target="CPU_CORES" Default="0" Mode="" Description="Number of CPU cores for encoding (0=auto-detect all available)" Type="Variable" Display="always" Required="false" Mask="false">0</Config>
+  <Config Name="Make Backup" Target="MAKE_BACKUP" Default="N" Mode="" Description="Backup original files before conversion (Y/N)" Type="Variable" Display="always" Required="false" Mask="false">N</Config>
+  <Config Name="Audio Bitrate" Target="AUDIO_BITRATE" Default="auto" Mode="" Description="Output bitrate (auto=match source, or specify e.g., 128k, 192k, 256k)" Type="Variable" Display="advanced" Required="false" Mask="false">auto</Config>
+  <Config Name="Audio Codec" Target="AUDIO_CODEC" Default="libfdk_aac" Mode="" Description="AAC encoder to use (libfdk_aac recommended for quality)" Type="Variable" Display="advanced" Required="false" Mask="false">libfdk_aac</Config>
+  <Config Name="User ID" Target="PUID" Default="99" Mode="" Description="User ID for file permissions (99=nobody, standard for Unraid)" Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  <Config Name="Group ID" Target="PGID" Default="100" Mode="" Description="Group ID for file permissions (100=users, standard for Unraid)" Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+</Container>
